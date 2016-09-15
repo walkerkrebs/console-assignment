@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 /* Walker Krebs
  * Section 001
  * Group 10
+ * 9/14/2016
  * 
  * This program allows users to enter the number of teams as well as team names and points. It then ranks the teams based on points. 
- * 
+ * The game class was implemented to keep track of the number of games played. Games played is a sample of the functionality. More features,
+ * like a game ID, can be easily implemented.
  */
 namespace ConsoleApplication1
 {
@@ -17,7 +19,7 @@ namespace ConsoleApplication1
         public String name;
         public int wins;
         public int losses;
-        public List<Game> lGames = new List<Game>();
+        public Game ogame = new Game();
     }
 
     class SoccerTeam : Team
@@ -41,6 +43,7 @@ namespace ConsoleApplication1
 
     class Game
     {
+        public int numgames { get; set; }
         public int gameID { get; set; }
         public bool homeTeam { get; set; }
 
@@ -70,6 +73,8 @@ namespace ConsoleApplication1
             String sName;
             String sNumTeams;
             String sPoints;
+            String sGames;
+            int iGames = 0;
             int iPoints = 0;
             bool bTest = true;
             List<SoccerTeam> lSoccerTeams = new List<SoccerTeam>();
@@ -77,18 +82,22 @@ namespace ConsoleApplication1
 
             Console.Write("How many Teams? ");
 
-            //test to make sure input is an integer
+            //test to make sure input is an integer greater than 0
             while(bTest)
             {
                 try
                 {
                     sNumTeams = Console.ReadLine();
                     iNumberTeams = Convert.ToInt32(sNumTeams);
-                    break;
+                    if (iNumberTeams <= 0)
+                    {
+                        Convert.ToInt32("break");
+                    }
+                    bTest = false;
                 }
-                catch
+                catch(Exception ex)
                 {
-                    Console.Write("Please enter an integer: ");
+                    Console.Write("Please enter an integer greater than 0: ");
                 }
             }
 
@@ -100,27 +109,57 @@ namespace ConsoleApplication1
 
                 sName = UppercaseFirst(sName);
 
-                Console.Write("Enter " + sName + "'s points: ");
-
+                Console.Write("How many games did " + sName + " play? ");
+                
                 //test for int
+                bTest = true;
                 while (bTest)
                 {
                     try
                     {
+                        
+                        sGames = Console.ReadLine();
+                        iGames = Convert.ToInt32(sGames);
+                        if (iGames < 0)
+                        {
+                            Convert.ToInt32("break");
+                        }
+                        bTest = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.Write("\nPlease enter a positive integer: ");
+                    }
+
+                }
+               
+                Console.Write("Enter " + sName + "'s points: ");
+
+                //test for int
+                bTest = true;
+                while (bTest)
+                {
+                    try
+                    {                        
                         sPoints = Console.ReadLine();
                         iPoints = Convert.ToInt32(sPoints);
+                        if(iPoints < 0)
+                        {
+                            Convert.ToInt32("break");
+                        }
                         bTest = false;
-                        //break;
+                        
                     }
                     catch(Exception ex)
                     {
-                        Console.Write("\nPlease enter an integer: ");
+                        Console.Write("\nPlease enter a positive integer: ");
                     }
                   
                 }
 
 
                 lSoccerTeams.Add(new SoccerTeam(sName, iPoints));
+                lSoccerTeams[iCount1].ogame.numgames = iGames;
             }
 
             //sort teams
@@ -128,16 +167,17 @@ namespace ConsoleApplication1
 
             //table header
             Console.WriteLine("\nHere is the sorted list:");
-            Console.WriteLine(("\nPosition").PadRight(25, ' ') + ("Name").PadRight(25,' ') + ("Points"));
-            Console.WriteLine(("--------").PadRight(24, ' ') + ("----").PadRight(25, ' ') + ("------"));
+            Console.WriteLine(("\nPosition").PadRight(25, ' ') + ("Name").PadRight(25, ' ') + ("Games").PadRight(25, ' ') + ("Points").PadRight(25, ' '));
+            Console.WriteLine(("--------").PadRight(24, ' ') + ("----").PadRight(25, ' ') + ("-----").PadRight(25, ' ') + ("------"));
 
             //print results for each team
             iCount2 = 1;
             foreach (SoccerTeam teamPrint in oSortedList)
             {
 
-                Console.Write(Convert.ToString(iCount2).PadRight(24, ' '));
+                Console.Write(Convert.ToString(iCount2).PadRight(24, ' '));                
                 Console.Write(teamPrint.name.PadRight(26,' '));
+                Console.Write(Convert.ToString(teamPrint.ogame.numgames).PadRight(25, ' '));
                 Console.WriteLine(Convert.ToString(teamPrint.points));
                 iCount2++;
             }
